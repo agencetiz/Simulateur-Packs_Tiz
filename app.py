@@ -1,146 +1,144 @@
 import streamlit as st
 
-# Configuration de la page
-st.set_page_config(page_title="Configurateur de Packs - Agence TIZ", page_icon="🚀", layout="wide")
+# Configuration de la page en mode large pour tout faire tenir sur un écran
+st.set_page_config(page_title="Configurateur Agence TIZ", page_icon="📐", layout="wide")
 
-# En-tête de l'application
-st.title("🚀 Configurateur de Packs Stratégiques - Agence TIZ")
+# CSS personnalisé pour épurer l'interface et la rendre "logiciel"
 st.markdown("""
-Bienvenue sur le simulateur de l'Agence TIZ. Personnalisez votre accompagnement digital B2B ou choisissez un de nos packs préconfigurés pour démarrer rapidement. 
-Notre objectif : devenir votre co-pilote business et livrer des résultats mesurables.
-""")
+    <style>
+    .block-container { padding-top: 1.5rem; padding-bottom: 1rem; }
+    h1, h2, h3 { margin-bottom: 0.5rem; padding-bottom: 0px; }
+    div.stButton > button { width: 100%; font-weight: bold; }
+    .price-tag { color: #263A7C; font-weight: bold; }
+    </style>
+""", unsafe_scale=True)
 
-# Définition du catalogue des prestations basé sur le modèle économique 2026
-catalog = {
-    "1. Conseil, Diagnostic & Audits Stratégiques": [
-        "État des lieux et stratégie transversale",
-        "Audit UX / UI (Expérience Utilisateur)",
-        "Audit SEO & Sémantique",
-        "Cadrage & Rédaction de cahiers des charges"
+# Titre principal discret et pro
+st.title("📐 Configurateur de Prestations - Agence TIZ")
+st.markdown("Composez votre accompagnement sur-mesure ou choisissez un pack préconfiguré. Tout se met à jour instantanément.")
+
+# --- BASE DE DONNÉES DES PRESTATIONS & PRIX ---
+SERVICES = {
+    "🌐 SOLUTIONS DIGITALES": {
+        "Audit UX & Stratégie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
+        "Landing Page / Site Nocode Agile (Duda/Shopify)": {"price": 2800, "desc": "Conception orientée performance et conversion."},
+        "Campagne Google Ads (SEA) & Tracking": {"price": 950, "desc": "Configuration et optimisation du trafic qualifié."},
+        "SEO & Stratégie de Contenu Sémantique": {"price": 1100, "desc": "Optimisation du référencement naturel durable."},
+        "Accompagnement Co-Pilote (Suivi mensuel ROI)": {"price": 1500, "desc": "Pilotage stratégique mensuel et réunions progrès."}
+    },
+    "🖨️ PRESTATIONS BRANDING & PRINT": {
+        "Charte Graphique & Identité Visuelle": {"price": 2500, "desc": "Création de logo, palettes et univers de marque complet."},
+        "Conception de Supports Print (Plaquette Éditoriale)": {"price": 1600, "desc": "Mise en page pro pour vos supports physiques de vente."},
+        "Copywriting de Performance & Ligne Éditoriale": {"price": 850, "desc": "Rédaction d'impact pour supports digitaux ou physiques."}
+    }
+}
+
+# Définition des packs pour l'auto-sélection
+PACKS_PRESETS = {
+    "Pack Lead Gen B2B (100% Digital)": [
+        "Audit UX & Stratégie B2B", 
+        "Landing Page / Site Nocode Agile (Duda/Shopify)", 
+        "Campagne Google Ads (SEA) & Tracking"
     ],
-    "2. Identité de Marque & Création de Contenus (Branding & Copywriting)": [
-        "Concept de communication & Charte graphique",
-        "Copywriting de performance",
-        "Création de supports Print & Corporate",
-        "Production Multimédia & Vidéo"
+    "Pack Image & Print (Branding)": [
+        "Charte Graphique & Identité Visuelle", 
+        "Conception de Supports Print (Plaquette Éditoriale)", 
+        "Copywriting de Performance & Ligne Éditoriale"
     ],
-    "3. Acquisition, Performance & Trafic (E-Marketing & Ads)": [
-        "Gestion et Optimisation Google Ads",
-        "Stratégie & Gestion Social Ads",
-        "Accompagnement et Animation des Réseaux Sociaux"
-    ],
-    "4. Solutions Web Agiles & Plateformes Nocode": [
-        "Conception de sites et Landing Pages Nocode (Duda, Shopify)",
-        "Configuration e-commerce & Tracking avancé"
-    ],
-    "5. L'Offre Co-Pilote : Accompagnement Récurrent & Suivi ROI": [
-        "Accompagnement stratégique et opérationnel récurrent",
-        "Hébergement Haute Performance & Sécurité",
-        "Maintenance & Supervision Analytique",
-        "Réunions Progrès Mensuelles"
-    ],
-    "6. Transfert de Compétences & Formations": [
-        "Formations Opérationnelles certifiées"
+    "Pack Performance Globale (Digital + Print)": [
+        "Audit UX & Stratégie B2B", 
+        "Landing Page / Site Nocode Agile (Duda/Shopify)",
+        "Campagne Google Ads (SEA) & Tracking",
+        "Charte Graphique & Identité Visuelle",
+        "Conception de Supports Print (Plaquette Éditoriale)"
     ]
 }
 
-# Packs préconfigurés (judicieusement choisis selon les enjeux B2B)
-packs = {
-    "Pack Génération de Leads B2B": [
-        "Audit UX / UI (Expérience Utilisateur)",
-        "Conception de sites et Landing Pages Nocode (Duda, Shopify)",
-        "Gestion et Optimisation Google Ads",
-        "Réunions Progrès Mensuelles"
-    ],
-    "Pack Co-Pilote Stratégique": [
-        "État des lieux et stratégie transversale",
-        "Audit SEO & Sémantique",
-        "Accompagnement stratégique et opérationnel récurrent",
-        "Maintenance & Supervision Analytique",
-        "Réunions Progrès Mensuelles"
-    ],
-    "Pack Identité & Lancement": [
-        "Concept de communication & Charte graphique",
-        "Copywriting de performance",
-        "Création de supports Print & Corporate",
-        "Conception de sites et Landing Pages Nocode (Duda, Shopify)"
-    ]
-}
+# --- GESTION DE L'ÉTAT (SESSION STATE) ---
+if "selected_items" not in st.session_state:
+    st.session_state.selected_items = []
 
-# Initialisation de l'état de la session pour conserver les choix de l'utilisateur
-if "selected_services" not in st.session_state:
-    st.session_state.selected_services = []
+# Fonctions de rappel pour les boutons de packs
+def apply_pack(pack_name):
+    st.session_state.selected_items = PACKS_PRESETS[pack_name]
 
-# Fonction pour appliquer un pack préconfiguré
-def set_pack(pack_name):
-    st.session_state.selected_services = packs[pack_name]
+# --- SECTION 1 : LES BOUTONS DE PACKS RAPIDES ---
+st.subheader("🎯 Étape 1 : Choisir une configuration rapide (Optionnel)")
+col_p1, col_p2, col_p3 = st.columns(3)
 
-# Section : Packs Préconfigurés
-st.header("🎯 Choisissez un pack préconfiguré")
-col1, col2, col3 = st.columns(3)
+with col_p1:
+    if st.button("🚀 Pack Lead Gen B2B", help="Audit + Site Web + Google Ads"):
+        apply_pack("Pack Lead Gen B2B (100% Digital)")
+with col_p2:
+    if st.button("🎨 Pack Image & Print", help="Charte graphique + Plaquette + Rédaction"):
+        apply_pack("Pack Image & Print (Branding)")
+with col_p3:
+    if st.button("⚡ Pack Performance Globale", help="La totale pour un lancement réussi"):
+        apply_pack("Pack Performance Globale (Digital + Print)")
 
-with col1:
-    st.info("### 🚀 Génération de Leads B2B")
-    st.markdown("Idéal pour acquérir de nouveaux clients rapidement via un tunnel optimisé.")
-    if st.button("Sélectionner ce pack", key="btn_leads"):
-        set_pack("Pack Génération de Leads B2B")
+st.write("---")
 
-with col2:
-    st.success("### 🧭 Co-Pilote Stratégique")
-    st.markdown("L'offre d'accompagnement mensuel pour piloter votre croissance.")
-    if st.button("Sélectionner ce pack", key="btn_copilote"):
-        set_pack("Pack Co-Pilote Stratégique")
+# --- SECTION 2 : AFFICHAGE DOUBLE COLONNE (CONFIGURATION & DEVIS) ---
+col_left, col_right = st.columns([5, 3])
 
-with col3:
-    st.warning("### ✨ Identité & Lancement")
-    st.markdown("Parfait pour poser les bases de votre marque et créer votre plateforme web.")
-    if st.button("Sélectionner ce pack", key="btn_identite"):
-        set_pack("Pack Identité & Lancement")
+# Liste de contrôle temporaire pour reconstruire l'état à chaque interaction
+current_selection = []
 
-st.divider()
-
-# Section : Configuration sur-mesure
-st.header("🛠️ Ou personnalisez votre configuration")
-st.markdown("Cochez ou décochez les prestations pour ajuster votre accompagnement :")
-
-selected_now = []
-
-# Affichage du catalogue sous forme d'accordéons
-for category, services in catalog.items():
-    with st.expander(category, expanded=False):
-        for service in services:
-            # Vérifier si le service est déjà sélectionné (soit manuellement, soit via un pack)
-            is_checked = service in st.session_state.selected_services
-            # Checkbox pour chaque prestation
-            if st.checkbox(service, value=is_checked, key=service):
-                selected_now.append(service)
-
-# Mise à jour des services sélectionnés
-st.session_state.selected_services = selected_now
-
-st.divider()
-
-# Section : Récapitulatif
-st.header("📋 Votre sélection")
-if st.session_state.selected_services:
-    for s in st.session_state.selected_services:
-        st.markdown(f"- ✅ {s}")
+with col_left:
+    st.subheader("🛠️ Étape 2 : Personnalisez vos options")
     
-    st.write("---")
-    st.subheader(f"Total : {len(st.session_state.selected_services)} prestation(s) sélectionnée(s).")
+    for category, items in SERVICES.items():
+        st.markdown(f"#### {category}")
+        for name, info in items.items():
+            # Vérifie si l'item doit être coché (suite au clic d'un bouton ou d'une coche précédente)
+            is_selected = name in st.session_state.selected_items
+            
+            # Label propre incluant le prix
+            label = f"**{name}** — {info['price']} €"
+            
+            # Affichage de la case à cocher
+            if st.checkbox(label, value=is_selected, key=f"cb_{name}"):
+                current_selection.append(name)
+        st.write("")
+
+# Synchronisation de la sélection
+st.session_state.selected_items = current_selection
+
+with col_right:
+    st.subheader("📋 Votre Estimation en Temps Réel")
     
-    # Formulaire de contact simulé
-    with st.form("contact_form"):
-        st.write("Laissez-nous vos coordonnées pour que Jean-François ou Laurent vous recontacte.")
-        email = st.text_input("Votre adresse e-mail professionnel")
-        entreprise = st.text_input("Nom de votre entreprise")
-        submitted = st.form_submit_button("Envoyer ma demande de devis")
+    if st.session_state.selected_items:
+        total_price = 0
+        # Conteneur visuel pour faire ressortir le devis
+        with st.container(border=True):
+            for item_name in st.session_state.selected_items:
+                # Retrouver le prix dans la structure de données
+                price = 0
+                for cat in SERVICES.values():
+                    if item_name in cat:
+                        price = cat[item_name]["price"]
+                        break
+                total_price += price
+                st.markdown(f"🔹 {item_name} : `{price} €`")
+            
+            st.write("---")
+            st.metric(label="MONTANT TOTAL ESTIMÉ (H.T.)", value=f"{total_price} €")
         
-        if submitted:
-            if email and entreprise:
-                st.balloons()
-                st.success(f"Merci ! Votre configuration a été transmise à l'Agence TIZ. Nous vous contacterons rapidement à l'adresse {email}.")
-            else:
-                st.error("Veuillez remplir votre e-mail et le nom de votre entreprise.")
-else:
-    st.info("Veuillez sélectionner des prestations ci-dessus ou choisir un pack préconfiguré pour voir le récapitulatif.")
+        # Formulaire d'engagement direct
+        st.write("")
+        st.subheader("📬 Étape 3 : Recevoir ce devis par écrit")
+        with st.form("devis_form", clear_on_submit=True):
+            nom = st.text_input("Votre nom *")
+            entreprise = st.text_input("Nom de l'entreprise *")
+            email = st.text_input("Adresse e-mail pro *")
+            telephone = st.text_input("Téléphone")
+            
+            submit = st.form_submit_button("Demander la validation de mon conseiller TIZ")
+            if submit:
+                if nom and entreprise and email:
+                    st.balloons()
+                    st.success(f"Merci {nom} ! Jean-François Marnette va étudier votre configuration pour l'entreprise {entreprise} et vous recontacter sous 24h.")
+                else:
+                    st.error("Veuillez remplir les champs obligatoires (*)")
+    else:
+        st.info("Cochez des options à gauche ou cliquez sur un pack en haut pour générer votre devis en direct.")
