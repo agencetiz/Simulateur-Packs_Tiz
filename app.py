@@ -1,145 +1,183 @@
 import streamlit as st
 
-# Configuration de la page en mode large pour tout faire tenir sur un écran
-st.set_page_config(page_title="Configurateur Agence TIZ", page_icon="📐", layout="wide")
+# ⚙️ CONFIGURATION SYSTÈME DE LA PAGE
+st.set_page_config(page_title="Simulateur TIZ", page_icon="💻", layout="wide")
 
-# CSS personnalisé pour épurer l'interface et la rendre "logiciel"
-# CORRECTION ICI : unsafe_allow_html=True
+# 🎨 INJECTION CSS (Sécurisée) POUR UN RENDU "APPLICATION"
 st.markdown("""
     <style>
-    .block-container { padding-top: 1.5rem; padding-bottom: 1rem; }
-    h1, h2, h3 { margin-bottom: 0.5rem; padding-bottom: 0px; }
-    div.stButton > button { width: 100%; font-weight: bold; }
-    .price-tag { color: #263A7C; font-weight: bold; }
+    .block-container { padding-top: 2rem; padding-bottom: 2rem; }
+    h1, h2, h3 { color: #1E293B; margin-bottom: 0.5rem; }
+    .stButton>button { width: 100%; font-weight: bold; border-radius: 8px; border: 1px solid #E2E8F0; }
+    .stButton>button:hover { border-color: #3B82F6; color: #3B82F6; }
+    .price-tag { color: #3B82F6; font-weight: 700; }
+    .recurring-tag { color: #10B981; font-weight: 700; }
+    .cart-box { background-color: #F8FAFC; padding: 20px; border-radius: 10px; border: 1px solid #E2E8F0; }
     </style>
 """, unsafe_allow_html=True)
 
-# Titre principal discret et pro
-st.title("📐 Configurateur de Prestations - Agence TIZ")
-st.markdown("Composez votre accompagnement sur-mesure ou choisissez un pack préconfiguré. Tout se met à jour instantanément.")
+# 🚀 TITRE DE L'APPLICATION
+st.title("💻 Configurateur de Projet - Agence TIZ")
+st.markdown("Construisez votre stratégie digitale sur-mesure. Les estimations se mettent à jour en temps réel.")
+st.write("---")
 
-# --- BASE DE DONNÉES DES PRESTATIONS & PRIX ---
-SERVICES = {
-    "🌐 SOLUTIONS DIGITALES": {
-        "Audit UX & Stratégie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
-        "Landing Page / Site Nocode Agile (Duda/Shopify)": {"price": 2800, "desc": "Conception orientée performance et conversion."},
-        "Campagne Google Ads (SEA) & Tracking": {"price": 950, "desc": "Configuration et optimisation du trafic qualifié."},
-        "SEO & Stratégie de Contenu Sémantique": {"price": 1100, "desc": "Optimisation du référencement naturel durable."},
-        "Accompagnement Co-Pilote (Suivi mensuel ROI)": {"price": 1500, "desc": "Pilotage stratégique mensuel et réunions progrès."}
-    },
-    "🖨️ PRESTATIONS BRANDING & PRINT": {
-        "Charte Graphique & Identité Visuelle": {"price": 2500, "desc": "Création de logo, palettes et univers de marque complet."},
-        "Conception de Supports Print (Plaquette Éditoriale)": {"price": 1600, "desc": "Mise en page pro pour vos supports physiques de vente."},
-        "Copywriting de Performance & Ligne Éditoriale": {"price": 850, "desc": "Rédaction d'impact pour supports digitaux ou physiques."}
-    }
+# 🗄️ BASE DE DONNÉES ARCHITECTURE (Uniques vs Récurrentes)
+SERVICES_UNIQUES = {
+    "Audit UX & Stratégie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
+    "Création Site Nocode Agile (Duda/Shopify)": {"price": 2800, "desc": "Conception orientée performance et conversion."},
+    "Setup Campagne Google Ads": {"price": 950, "desc": "Configuration initiale, mots-clés et tracking."},
+    "Charte Graphique & Identité Visuelle": {"price": 2500, "desc": "Création de logo et univers de marque complet."},
+    "Conception de Supports Print": {"price": 1600, "desc": "Mise en page de plaquettes et supports de vente."}
 }
 
-# Définition des packs pour l'auto-sélection
+SERVICES_RECURRENTS = {
+    "Accompagnement Co-Pilote (Suivi ROI)": {"price": 1500, "desc": "Pilotage stratégique mensuel et réunions progrès."},
+    "Gestion et Optimisation Google Ads": {"price": 500, "desc": "Ajustement mensuel des enchères et annonces."},
+    "SEO & Création de Contenu Mensuel": {"price": 800, "desc": "Rédaction d'articles et optimisation continue."},
+    "Maintenance, Hébergement & Sécurité": {"price": 150, "desc": "Mises à jour, sauvegardes et supervision technique."}
+}
+
 PACKS_PRESETS = {
-    "Pack Lead Gen B2B (100% Digital)": [
+    "Pack Lancement (100% Unique)": [
         "Audit UX & Stratégie B2B", 
-        "Landing Page / Site Nocode Agile (Duda/Shopify)", 
-        "Campagne Google Ads (SEA) & Tracking"
+        "Création Site Nocode Agile (Duda/Shopify)", 
+        "Charte Graphique & Identité Visuelle"
     ],
-    "Pack Image & Print (Branding)": [
-        "Charte Graphique & Identité Visuelle", 
-        "Conception de Supports Print (Plaquette Éditoriale)", 
-        "Copywriting de Performance & Ligne Éditoriale"
+    "Pack Génération de Leads (Mixte)": [
+        "Setup Campagne Google Ads", 
+        "Création Site Nocode Agile (Duda/Shopify)", 
+        "Gestion et Optimisation Google Ads",
+        "Maintenance, Hébergement & Sécurité"
     ],
-    "Pack Performance Globale (Digital + Print)": [
+    "Pack Co-Pilote Intégral": [
         "Audit UX & Stratégie B2B", 
-        "Landing Page / Site Nocode Agile (Duda/Shopify)",
-        "Campagne Google Ads (SEA) & Tracking",
-        "Charte Graphique & Identité Visuelle",
-        "Conception de Supports Print (Plaquette Éditoriale)"
+        "Setup Campagne Google Ads",
+        "Accompagnement Co-Pilote (Suivi ROI)",
+        "Gestion et Optimisation Google Ads"
     ]
 }
 
-# --- GESTION DE L'ÉTAT (SESSION STATE) ---
+# 🧠 GESTION DE L'ÉTAT DU COMPOSANT (State Management)
 if "selected_items" not in st.session_state:
     st.session_state.selected_items = []
 
-# Fonctions de rappel pour les boutons de packs
 def apply_pack(pack_name):
     st.session_state.selected_items = PACKS_PRESETS[pack_name]
 
-# --- SECTION 1 : LES BOUTONS DE PACKS RAPIDES ---
-st.subheader("🎯 Étape 1 : Choisir une configuration rapide (Optionnel)")
-col_p1, col_p2, col_p3 = st.columns(3)
+# 📐 STRUCTURE DE L'INTERFACE EN 2 GRANDES COLONNES (Gauche: Choix, Droite: Panier & Contact)
+col_main, col_sidebar = st.columns([6, 4], gap="large")
 
-with col_p1:
-    if st.button("🚀 Pack Lead Gen B2B", help="Audit + Site Web + Google Ads"):
-        apply_pack("Pack Lead Gen B2B (100% Digital)")
-with col_p2:
-    if st.button("🎨 Pack Image & Print", help="Charte graphique + Plaquette + Rédaction"):
-        apply_pack("Pack Image & Print (Branding)")
-with col_p3:
-    if st.button("⚡ Pack Performance Globale", help="La totale pour un lancement réussi"):
-        apply_pack("Pack Performance Globale (Digital + Print)")
-
-st.write("---")
-
-# --- SECTION 2 : AFFICHAGE DOUBLE COLONNE (CONFIGURATION & DEVIS) ---
-col_left, col_right = st.columns([5, 3])
-
-# Liste de contrôle temporaire pour reconstruire l'état à chaque interaction
 current_selection = []
 
-with col_left:
-    st.subheader("🛠️ Étape 2 : Personnalisez vos options")
+with col_main:
+    # ==========================================
+    # ÉTAPE 1 : CONFIGURATION RAPIDE
+    # ==========================================
+    st.header("1️⃣ Configuration rapide (Packs)")
+    st.markdown("Démarrez avec une base optimisée pour vos objectifs.")
     
-    for category, items in SERVICES.items():
-        st.markdown(f"#### {category}")
-        for name, info in items.items():
-            # Vérifie si l'item doit être coché (suite au clic d'un bouton ou d'une coche précédente)
-            is_selected = name in st.session_state.selected_items
-            
-            # Label propre incluant le prix
-            label = f"**{name}** — {info['price']} €"
-            
-            # Affichage de la case à cocher
-            if st.checkbox(label, value=is_selected, key=f"cb_{name}"):
-                current_selection.append(name)
-        st.write("")
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        if st.button("🚀 Pack Lancement", help="Création de marque et plateforme web"):
+            apply_pack("Pack Lancement (100% Unique)")
+    with col_p2:
+        if st.button("🎯 Pack Lead Gen", help="Site web + Acquisition Google Ads"):
+            apply_pack("Pack Génération de Leads (Mixte)")
+    with col_p3:
+        if st.button("🤝 Pack Co-Pilote", help="Stratégie et accompagnement mensuel"):
+            apply_pack("Pack Co-Pilote Intégral")
 
-# Synchronisation de la sélection
+    st.write("")
+    
+    # ==========================================
+    # ÉTAPE 2 : PERSONNALISEZ VOS OPTIONS
+    # ==========================================
+    st.header("2️⃣ Personnalisez vos options")
+    st.markdown("Ajustez votre sélection à la carte. Les options s'ajoutent à votre devis à droite.")
+    
+    col_uniques, col_recurrents = st.columns(2)
+    
+    # Colonne Prestations Uniques
+    with col_uniques:
+        st.subheader("🔹 Prestations Uniques (One-shot)")
+        for name, info in SERVICES_UNIQUES.items():
+            is_selected = name in st.session_state.selected_items
+            label = f"{name} — {info['price']} €"
+            if st.checkbox(label, value=is_selected, key=f"cb_{name}", help=info['desc']):
+                current_selection.append(name)
+                
+    # Colonne Prestations Récurrentes
+    with col_recurrents:
+        st.subheader("🔄 Prestations Récurrentes (Mensuel)")
+        for name, info in SERVICES_RECURRENTS.items():
+            is_selected = name in st.session_state.selected_items
+            label = f"{name} — {info['price']} € / mois"
+            if st.checkbox(label, value=is_selected, key=f"cb_{name}", help=info['desc']):
+                current_selection.append(name)
+
+# Synchronisation stricte de la mémoire
 st.session_state.selected_items = current_selection
 
-with col_right:
-    st.subheader("📋 Votre Estimation en Temps Réel")
+with col_sidebar:
+    # ==========================================
+    # PANIER & CALCUL EN TEMPS RÉEL
+    # ==========================================
+    st.header("📋 Votre Estimation")
+    
+    total_unique = 0
+    total_recurrent = 0
+    
+    st.markdown('<div class="cart-box">', unsafe_allow_html=True)
     
     if st.session_state.selected_items:
-        total_price = 0
-        # Conteneur visuel pour faire ressortir le devis
-        with st.container(border=True):
-            for item_name in st.session_state.selected_items:
-                # Retrouver le prix dans la structure de données
-                price = 0
-                for cat in SERVICES.values():
-                    if item_name in cat:
-                        price = cat[item_name]["price"]
-                        break
-                total_price += price
-                st.markdown(f"🔹 {item_name} : `{price} €`")
-            
-            st.write("---")
-            st.metric(label="MONTANT TOTAL ESTIMÉ (H.T.)", value=f"{total_price} €")
+        for item in st.session_state.selected_items:
+            # Vérification dans les prestations uniques
+            if item in SERVICES_UNIQUES:
+                price = SERVICES_UNIQUES[item]["price"]
+                total_unique += price
+                st.markdown(f"✅ {item} : `<span class='price-tag'>{price} €</span>`", unsafe_allow_html=True)
+            # Vérification dans les prestations récurrentes
+            elif item in SERVICES_RECURRENTS:
+                price = SERVICES_RECURRENTS[item]["price"]
+                total_recurrent += price
+                st.markdown(f"🔄 {item} : `<span class='recurring-tag'>{price} € / mois</span>`", unsafe_allow_html=True)
+                
+        st.write("---")
         
-        # Formulaire d'engagement direct
-        st.write("")
-        st.subheader("📬 Étape 3 : Recevoir ce devis par écrit")
-        with st.form("devis_form", clear_on_submit=True):
-            nom = st.text_input("Votre nom *")
-            entreprise = st.text_input("Nom de l'entreprise *")
-            email = st.text_input("Adresse e-mail pro *")
-            telephone = st.text_input("Téléphone")
+        # Affichage des métriques (Séparation Budget initial et mensuel)
+        col_m1, col_m2 = st.columns(2)
+        with col_m1:
+            st.metric(label="BUDGET INITIAL (H.T.)", value=f"{total_unique} €")
+        with col_m2:
+            st.metric(label="BUDGET MENSUEL (H.T.)", value=f"{total_recurrent} €")
             
-            submit = st.form_submit_button("Demander la validation de mon conseiller TIZ")
-            if submit:
-                if nom and entreprise and email:
-                    st.balloons()
-                    st.success(f"Merci {nom} ! Jean-François Marnette va étudier votre configuration pour l'entreprise {entreprise} et vous recontacter sous 24h.")
-                else:
-                    st.error("Veuillez remplir les champs obligatoires (*)")
     else:
-        st.info("Cochez des options à gauche ou cliquez sur un pack en haut pour générer votre devis en direct.")
+        st.info("Sélectionnez des options à gauche ou choisissez un pack pour voir l'estimation.")
+        
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.write("")
+    
+    # ==========================================
+    # ÉTAPE 3 : NOUS CONTACTER POUR EN DISCUTER
+    # ==========================================
+    st.header("3️⃣ Nous contacter pour en discuter")
+    st.markdown("Validez cette estimation avec l'équipe TIZ.")
+    
+    with st.form("contact_form", clear_on_submit=True):
+        nom = st.text_input("Nom & Prénom *")
+        entreprise = st.text_input("Société *")
+        email = st.text_input("E-mail professionnel *")
+        telephone = st.text_input("Téléphone")
+        notes = st.text_area("Un détail à ajouter ? (Optionnel)")
+        
+        submit_btn = st.form_submit_button("Envoyer ma demande à TIZ", type="primary")
+        
+        if submit_btn:
+            if nom and entreprise and email and st.session_state.selected_items:
+                st.balloons()
+                st.success(f"Transmission réussie ! Jean-François ou l'équipe TIZ vous contactera rapidement pour discuter de ce budget (Initial: {total_unique}€ | Mensuel: {total_recurrent}€).")
+            elif not st.session_state.selected_items:
+                st.warning("Veuillez sélectionner au moins une prestation avant d'envoyer.")
+            else:
+                st.error("Merci de remplir les champs obligatoires (*).")
