@@ -3,7 +3,7 @@ import streamlit as st
 # CONFIGURATION SYSTEME DE LA PAGE
 st.set_page_config(page_title="Simulateur TIZ", layout="wide")
 
-# INJECTION CSS (Securisee) POUR UN RENDU APPLICATION
+# INJECTION CSS POUR UN RENDU APPLICATION
 st.markdown("""
     <style>
     .block-container { padding-top: 2rem; padding-bottom: 2rem; }
@@ -57,17 +57,21 @@ PACKS_PRESETS = {
     ]
 }
 
-# GESTION DE L'ETAT DU COMPOSANT (State Management)
-if "selected_items" not in st.session_state:
-    st.session_state.selected_items = []
+# GESTION DE L'ETAT DU COMPOSANT VIA CALLBACKS
+# Initialisation des variables de session pour chaque case a cocher
+for service in list(SERVICES_UNIQUES.keys()) + list(SERVICES_RECURRENTS.keys()):
+    if f"cb_{service}" not in st.session_state:
+        st.session_state[f"cb_{service}"] = False
 
+# Fonction appelee lors du clic sur un bouton de pack
 def apply_pack(pack_name):
-    st.session_state.selected_items = PACKS_PRESETS[pack_name]
+    pack_items = PACKS_PRESETS[pack_name]
+    for service in list(SERVICES_UNIQUES.keys()) + list(SERVICES_RECURRENTS.keys()):
+        # Coche la case si le service est dans le pack, decoche sinon
+        st.session_state[f"cb_{service}"] = (service in pack_items)
 
-# STRUCTURE DE L'INTERFACE EN 2 GRANDES COLONNES (Gauche: Choix, Droite: Panier & Contact)
+# STRUCTURE DE L'INTERFACE EN 2 GRANDES COLONNES
 col_main, col_sidebar = st.columns([6, 4], gap="large")
-
-current_selection = []
 
 with col_main:
     # ETAPE 1 : CONFIGURATION RAPIDE
@@ -76,14 +80,11 @@ with col_main:
     
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
-        if st.button("Pack Lancement", help="Creation de marque et plateforme web"):
-            apply_pack("Pack Lancement (100% Unique)")
+        st.button("Pack Lancement", on_click=apply_pack, args=("Pack Lancement (100% Unique)",), help="Creation de marque et plateforme web")
     with col_p2:
-        if st.button("Pack Lead Gen", help="Site web + Acquisition Google Ads"):
-            apply_pack("Pack Generation de Leads (Mixte)")
+        st.button("Pack Lead Gen", on_click=apply_pack, args=("Pack Generation de Leads (Mixte)",), help="Site web + Acquisition Google Ads")
     with col_p3:
-        if st.button("Pack Co-Pilote", help="Strategie et accompagnement mensuel"):
-            apply_pack("Pack Co-Pilote Integral")
+        st.button("Pack Co-Pilote", on_click=apply_pack, args=("Pack Co-Pilote Integral",), help="Strategie et accompagnement mensuel")
 
     st.write("")
     
@@ -97,22 +98,15 @@ with col_main:
     with col_uniques:
         st.subheader("Prestations Uniques (One-shot)")
         for name, info in SERVICES_UNIQUES.items():
-            is_selected = name in st.session_state.selected_items
             label = f"{name} - {info['price']} €"
-            if st.checkbox(label, value=is_selected, key=f"cb_{name}", help=info['desc']):
-                current_selection.append(name)
+            st.checkbox(label, key=f"cb_{name}", help=info['desc'])
                 
     # Colonne Prestations Recurrentes
     with col_recurrents:
         st.subheader("Prestations Recurrentes (Mensuel)")
         for name, info in SERVICES_RECURRENTS.items():
-            is_selected = name in st.session_state.selected_items
             label = f"{name} - {info['price']} € / mois"
-            if st.checkbox(label, value=is_selected, key=f"cb_{name}", help=info['desc']):
-                current_selection.append(name)
-
-# Synchronisation stricte de la memoire
-st.session_state.selected_items = current_selection
+            st.checkbox(label, key=f"cb_{name}", help=info['desc'])
 
 with col_sidebar:
     # PANIER & CALCUL EN TEMPS REEL
@@ -120,31 +114,33 @@ with col_sidebar:
     
     total_unique = 0
     total_recurrent = 0
+    has_selection = False
     
     st.markdown('<div class="cart-box">', unsafe_allow_html=True)
     
-    if st.session_state.selected_items:
-        for item in st.session_state.selected_items:
-            # Verification dans les prestations uniques
-            if item in SERVICES_UNIQUES:
-                price = SERVICES_UNIQUES[item]["price"]
-                total_unique += price
-                st.markdown(f"- {item} : <span class='price-tag'>{price} €</span>", unsafe_allow_html=True)
-            # Verification dans les prestations recurrentes
-            elif item in SERVICES_RECURRENTS:
-                price = SERVICES_RECURRENTS[item]["price"]
-                total_recurrent += price
-                st.markdown(f"- {item} : <span class='recurring-tag'>{price} € / mois</span>", unsafe_allow_html=True)
-                
+    # Verification des elements selectionnes via l'etat des cases a cocher
+    for item in SERVICES_UNIQUES:
+        if st.session_state[f"cb_{item}"]:
+            has_selection = True
+            price = SERVICES_UNIQUES[item]["price"]
+            total_unique += price
+            st.markdown(f"- {item} : <span class='price-tag'>{price} €</span>", unsafe_allow_html=True)
+            
+    for item in SERVICES_RECURRENTS:
+        if st.session_state[f"cb_{item}"]:
+            has_selection = True
+            price = SERVICES_RECURRENTS[item]["price"]
+            total_recurrent += price
+            st.markdown(f"- {item} : <span class='recurring-tag'>{price} € / mois</span>", unsafe_allow_html=True)
+    
+    if has_selection:
         st.write("---")
-        
         # Affichage des metriques (Separation Budget initial et mensuel)
         col_m1, col_m2 = st.columns(2)
         with col_m1:
             st.metric(label="BUDGET INITIAL (H.T.)", value=f"{total_unique} €")
         with col_m2:
             st.metric(label="BUDGET MENSUEL (H.T.)", value=f"{total_recurrent} €")
-            
     else:
         st.info("Selectionnez des options a gauche ou choisissez un pack pour voir l'estimation.")
         
@@ -166,9 +162,9 @@ with col_sidebar:
         submit_btn = st.form_submit_button("Envoyer ma demande a TIZ", type="primary")
         
         if submit_btn:
-            if nom and entreprise and email and st.session_state.selected_items:
+            if nom and entreprise and email and has_selection:
                 st.success(f"Transmission reussie. L'equipe TIZ vous contactera rapidement pour discuter de ce budget (Initial: {total_unique}€ | Mensuel: {total_recurrent}€).")
-            elif not st.session_state.selected_items:
+            elif not has_selection:
                 st.warning("Veuillez selectionner au moins une prestation avant d'envoyer.")
             else:
                 st.error("Merci de remplir les champs obligatoires (*).")
