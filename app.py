@@ -4,6 +4,7 @@ import streamlit as st
 st.set_page_config(page_title="Configurateur Agence TIZ", page_icon="📐", layout="wide")
 
 # CSS personnalisé pour épurer l'interface et la rendre "logiciel"
+# CORRECTION ICI : unsafe_allow_html=True
 st.markdown("""
     <style>
     .block-container { padding-top: 1.5rem; padding-bottom: 1rem; }
@@ -11,7 +12,7 @@ st.markdown("""
     div.stButton > button { width: 100%; font-weight: bold; }
     .price-tag { color: #263A7C; font-weight: bold; }
     </style>
-""", unsafe_scale=True)
+""", unsafe_allow_html=True)
 
 # Titre principal discret et pro
 st.title("📐 Configurateur de Prestations - Agence TIZ")
