@@ -4,7 +4,7 @@ import os
 # CONFIGURATION SYSTEME DE LA PAGE
 st.set_page_config(page_title="Configurateur - Agence Tiz", layout="wide", initial_sidebar_state="collapsed")
 
-# INJECTION CSS AVANCEE (Design moderne, Montserrat, espacements optimises)
+# INJECTION CSS AVANCEE
 st.markdown("""
     <style>
     /* Importation exacte de Montserrat */
@@ -15,7 +15,6 @@ st.markdown("""
         color: #111827;
     }
     
-    /* Fond de l'application subtilement grise pour faire ressortir les cartes blanches */
     .stApp {
         background-color: #F9FAFB;
     }
@@ -24,14 +23,12 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* COMPRESSION DES ESPACES GLOBAUX */
     .block-container { 
         padding-top: 1.5rem !important; 
         padding-bottom: 1.5rem !important; 
         max-width: 1200px;
     }
 
-    /* COLONNE STICKY */
     [data-testid="column"]:nth-of-type(2) {
         position: -webkit-sticky;
         position: sticky;
@@ -40,7 +37,6 @@ st.markdown("""
         z-index: 100;
     }
 
-    /* DESIGN MODERNE DES CARTES (UI) */
     [data-testid="stVerticalBlockBorderWrapper"] {
         border: 1px solid #E5E7EB !important;
         border-radius: 12px !important;
@@ -50,21 +46,18 @@ st.markdown("""
         margin-bottom: 0.5rem !important;
     }
 
-    /* TYPOGRAPHIE (Titre reduit de 20%, espacement sous les h3) */
     h1 { color: #111827; font-weight: 800; letter-spacing: -0.5px; font-size: 1.7rem !important; margin: 0 !important; padding: 0 !important; }
     h2 { color: #2563EB; font-weight: 700; font-size: 1.1rem !important; margin: 0.2rem 0 0.4rem 0 !important; padding: 0 !important; }
     
-    /* Ajout d'un petit espace sous les sous-titres (Investissement/Accompagnement) */
     h3 { color: #111827; font-weight: 600; font-size: 0.9rem !important; margin: 0.2rem 0 1rem 0 !important; padding: 0 !important; border-bottom: 1px solid #F3F4F6; padding-bottom: 0.3rem !important; }
     p { color: #4B5563; font-size: 0.75rem !important; line-height: 1.3 !important; margin: 0 0 0.5rem 0 !important; padding: 0 !important; }
 
-    /* CHECKBOX STREAMLIT - Design plus propre */
     div.row-widget.stCheckbox {
         margin-top: -0.2rem !important;
         margin-bottom: -0.2rem !important;
     }
 
-    /* BOUTONS D'ACTION (Packs) */
+    /* BOUTONS SECONDAIRES (Packs) */
     .stButton>button { 
         width: 100%; 
         background-color: #F8FAFC;
@@ -78,7 +71,7 @@ st.markdown("""
         margin-top: 0.2rem;
     }
     
-    /* ROLLOVER DES BOUTONS (Texte blanc) */
+    /* ROLLOVER BOUTONS SECONDAIRES (Bleu) */
     .stButton>button:hover { 
         background-color: #2563EB !important; 
         color: #FFFFFF !important; 
@@ -86,23 +79,25 @@ st.markdown("""
         box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
     }
     
-    /* BOUTON DE SOUMISSION PRIMAIRE */
+    /* BOUTON PRIMAIRE (Validation) */
     [data-testid="baseButton-primary"] {
-        background-color: #111827 !important;
+        background-color: #E11D48 !important; /* Rouge */
         color: white !important;
         border: none !important;
         border-radius: 8px !important;
+        transition: all 0.2s ease;
     }
+    
+    /* ROLLOVER BOUTON PRIMAIRE (Rouge foncé) */
     [data-testid="baseButton-primary"]:hover {
-        background-color: #374151 !important;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        background-color: #BE123C !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.3);
     }
 
-    /* ETIQUETTES DE PRIX */
     .price-tag { color: #111827; font-weight: 600; float: right;}
     .recurring-tag { color: #2563EB; font-weight: 600; float: right;}
     
-    /* BLOC TOTAL FINAL MODERNE */
     .highlight-total {
         background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
         color: white;
@@ -118,50 +113,50 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# EN-TETE DE L'APPLICATION AVEC FICHIER .WEBP LOCAL
-col_logo, col_title = st.columns([1, 8], gap="small")
+# EN-TETE DE L'APPLICATION (Logo agrandi et titre décalé)
+col_logo, col_title = st.columns([2, 8], gap="large")
 with col_logo:
     logo_path = "logo-tiz.webp"
     if os.path.exists(logo_path):
-        st.image(logo_path, width=70)
+        st.image(logo_path, width=140)
     else:
         st.error("⚠️ Placez logo-tiz.webp ici")
 
 with col_title:
-    st.markdown("<h1 style='margin-bottom:0;'>Configurateur Digital</h1><p style='color: #2563EB; font-weight: 600; margin-top:0;'>Simulateur d'architecture B2B</p>", unsafe_allow_html=True)
+    st.markdown("<div style='padding-top: 10px;'><h1 style='margin-bottom:0;'>Configurateur digital</h1><p style='color: #2563EB; font-weight: 600; margin-top:0;'>Simulateur d'architecture B2B</p></div>", unsafe_allow_html=True)
 
-# BASE DE DONNEES ARCHITECTURE
+# BASE DE DONNEES ARCHITECTURE (Textes passés en minuscules)
 SERVICES_UNIQUES = {
-    "Audit UX & Strategie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
-    "Creation Site Web Performant": {"price": 2800, "desc": "Conception orientee conversion et ergonomie."},
-    "Configuration Google Ads": {"price": 950, "desc": "Setup initial, mots-cles et tracking."},
-    "Design & Identite de Marque": {"price": 2500, "desc": "Creation de logo et univers graphique complet."},
-    "Conception Supports Print": {"price": 1600, "desc": "Design de plaquettes et supports physiques."}
+    "Audit UX & stratégie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
+    "Création site web performant": {"price": 2800, "desc": "Conception orientée conversion et ergonomie."},
+    "Configuration Google Ads": {"price": 950, "desc": "Setup initial, mots-clés et tracking."},
+    "Design & identité de marque": {"price": 2500, "desc": "Création de logo et univers graphique complet."},
+    "Conception supports print": {"price": 1600, "desc": "Design de plaquettes et supports physiques."}
 }
 
 SERVICES_RECURRENTS = {
-    "Accompagnement Co-Pilote": {"price": 1500, "desc": "Pilotage strategique et suivi mensuel du ROI."},
-    "Gestion Google Ads": {"price": 500, "desc": "Ajustement mensuel des encheres et campagnes."},
-    "Creation de Contenu SEO": {"price": 800, "desc": "Redaction web et optimisation continue."},
-    "Maintenance Technique": {"price": 150, "desc": "Supervision, securite et mises a jour."}
+    "Accompagnement co-pilote": {"price": 1500, "desc": "Pilotage stratégique et suivi mensuel du ROI."},
+    "Gestion Google Ads": {"price": 500, "desc": "Ajustement mensuel des enchères et campagnes."},
+    "Création de contenu SEO": {"price": 800, "desc": "Rédaction web et optimisation continue."},
+    "Maintenance technique": {"price": 150, "desc": "Supervision, sécurité et mises à jour."}
 }
 
 PACKS_PRESETS = {
-    "Pack Prospection": [
+    "Pack prospection": [
         "Configuration Google Ads", 
         "Gestion Google Ads",
-        "Accompagnement Co-Pilote"
+        "Accompagnement co-pilote"
     ],
-    "Pack Notoriete": [
-        "Design & Identite de Marque", 
-        "Creation Site Web Performant", 
-        "Creation de Contenu SEO"
+    "Pack notoriété": [
+        "Design & identité de marque", 
+        "Création site web performant", 
+        "Création de contenu SEO"
     ],
-    "Pack Demarrage d'activite": [
-        "Audit UX & Strategie B2B", 
-        "Creation Site Web Performant", 
-        "Design & Identite de Marque",
-        "Maintenance Technique"
+    "Pack démarrage d'activité": [
+        "Audit UX & stratégie B2B", 
+        "Création site web performant", 
+        "Design & identité de marque",
+        "Maintenance technique"
     ]
 }
 
@@ -179,43 +174,43 @@ def apply_pack(pack_name):
 col_main, col_sidebar = st.columns([6, 4], gap="medium")
 
 with col_main:
-    # ETAPE 1 : RECOMMANDATIONS
+    # ETAPE 1
     with st.container(border=True):
-        st.markdown("<h2>1. Configurations Recommandées</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>1. Configurations recommandées</h2>", unsafe_allow_html=True)
         col_p1, col_p2, col_p3 = st.columns(3)
         with col_p1:
-            st.button("Pack Prospection", on_click=apply_pack, args=("Pack Prospection",))
+            st.button("Pack prospection", on_click=apply_pack, args=("Pack prospection",))
         with col_p2:
-            st.button("Pack Notoriété", on_click=apply_pack, args=("Pack Notoriete",))
+            st.button("Pack notoriété", on_click=apply_pack, args=("Pack notoriété",))
         with col_p3:
-            st.button("Pack Démarrage", on_click=apply_pack, args=("Pack Demarrage d'activite",))
+            st.button("Pack démarrage", on_click=apply_pack, args=("Pack démarrage d'activité",))
 
-    # ETAPE 2 : PERSONNALISATION
+    # ETAPE 2
     with st.container(border=True):
-        st.markdown("<h2>2. Personnalisation du Périmètre</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>2. Personnalisation du périmètre</h2>", unsafe_allow_html=True)
         col_uniques, col_recurrents = st.columns(2, gap="medium")
         with col_uniques:
-            st.markdown("<h3>Investissement Initial</h3>", unsafe_allow_html=True)
+            st.markdown("<h3>Investissement initial</h3>", unsafe_allow_html=True)
             for name, info in SERVICES_UNIQUES.items():
                 st.checkbox(f"{name} - {info['price']} €", key=f"cb_{name}", help=info['desc'])
         with col_recurrents:
-            st.markdown("<h3>Accompagnement Mensuel</h3>", unsafe_allow_html=True)
+            st.markdown("<h3>Accompagnement mensuel</h3>", unsafe_allow_html=True)
             for name, info in SERVICES_RECURRENTS.items():
                 st.checkbox(f"{name} - {info['price']} € / m", key=f"cb_{name}", help=info['desc'])
 
-    # ETAPE 3 : FORMULAIRE
+    # ETAPE 3
     with st.container(border=True):
         st.markdown("<h2>3. Transmission du dossier</h2>", unsafe_allow_html=True)
         with st.form("contact_form", clear_on_submit=True):
-            nom = st.text_input("Nom & Prénom *")
+            nom = st.text_input("Nom & prénom *")
             entreprise = st.text_input("Société *")
             email = st.text_input("E-mail professionnel *")
             submit_btn = st.form_submit_button("Valider le projet", type="primary")
 
 with col_sidebar:
-    # L'ESTIMATION (STICKY)
+    # L'ESTIMATION
     with st.container(border=True):
-        st.markdown("<h2>Votre Estimation</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>Votre estimation</h2>", unsafe_allow_html=True)
         
         total_unique = 0
         total_recurrent = 0
@@ -229,13 +224,13 @@ with col_sidebar:
                 total_unique += SERVICES_UNIQUES[item]["price"]
         
         if total_unique > 0:
-            html_cart += "<h3 style='color: #111827; border-bottom: none; padding-bottom: 0; margin-top: 0.5rem !important;'>Dépenses Fixes (Setup)</h3>"
+            html_cart += "<h3 style='color: #111827; border-bottom: none; padding-bottom: 0; margin-top: 0.5rem !important;'>Dépenses fixes (setup)</h3>"
             html_cart += "<ul style='list-style-type: none; padding: 0; margin: 0 0 0.8rem 0;'>"
             for item in SERVICES_UNIQUES:
                 if st.session_state[f"cb_{item}"]:
                     price = SERVICES_UNIQUES[item]["price"]
                     html_cart += f"<li style='padding: 0.4rem 0; color: #4B5563; font-size: 0.8rem; border-bottom: 1px dashed #E5E7EB;'>{item} <span class='price-tag'>{price} €</span></li>"
-            html_cart += f"<li style='padding: 0.5rem 0 0 0; color: #111827; font-size: 0.85rem; font-weight: 700; text-align: right;'>Sous-total Fixe : {total_unique} €</li>"
+            html_cart += f"<li style='padding: 0.5rem 0 0 0; color: #111827; font-size: 0.85rem; font-weight: 700; text-align: right;'>Sous-total fixe : {total_unique} €</li>"
             html_cart += "</ul>"
 
         # CALCUL ET AFFICHAGE RECURRENT MENSUEL
@@ -245,13 +240,13 @@ with col_sidebar:
                 total_recurrent += SERVICES_RECURRENTS[item]["price"]
 
         if total_recurrent > 0:
-            html_cart += "<h3 style='color: #111827; border-bottom: none; padding-bottom: 0; margin-top: 1rem !important;'>Accompagnement Mensuel</h3>"
+            html_cart += "<h3 style='color: #111827; border-bottom: none; padding-bottom: 0; margin-top: 1rem !important;'>Accompagnement mensuel</h3>"
             html_cart += "<ul style='list-style-type: none; padding: 0; margin: 0 0 0.5rem 0;'>"
             for item in SERVICES_RECURRENTS:
                 if st.session_state[f"cb_{item}"]:
                     price = SERVICES_RECURRENTS[item]["price"]
                     html_cart += f"<li style='padding: 0.4rem 0; color: #4B5563; font-size: 0.8rem; border-bottom: 1px dashed #E5E7EB;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
-            html_cart += f"<li style='padding: 0.5rem 0 0 0; color: #2563EB; font-size: 0.85rem; font-weight: 700; text-align: right;'>Sous-total Mensuel : {total_recurrent} € / m</li>"
+            html_cart += f"<li style='padding: 0.5rem 0 0 0; color: #2563EB; font-size: 0.85rem; font-weight: 700; text-align: right;'>Sous-total mensuel : {total_recurrent} € / m</li>"
             html_cart += "</ul>"
         
         if has_selection:
@@ -260,9 +255,9 @@ with col_sidebar:
             # BLOC TOTAL MIS EN VALEUR
             st.markdown(f"""
             <div class="highlight-total">
-                <div class="label">Total Setup H.T.</div>
+                <div class="label">Total setup H.T.</div>
                 <div class="value">{total_unique} €</div>
-                <div class="sub-value">Total Mensuel : {total_recurrent} € / mois</div>
+                <div class="sub-value">Total mensuel : {total_recurrent} € / mois</div>
             </div>
             """, unsafe_allow_html=True)
         else:
