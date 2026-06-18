@@ -106,12 +106,12 @@ st.markdown("""
 # EN-TETE DE L'APPLICATION AVEC FICHIER .WEBP LOCAL
 col_logo, col_title = st.columns([1, 8], gap="small")
 with col_logo:
-    # Le fichier doit etre a la racine avec app.py
+    # Integration du logo Tiz depuis le dossier racine
     logo_path = "logo-tiz.webp"
     if os.path.exists(logo_path):
         st.image(logo_path, width=80)
     else:
-        st.error("Placez logo-tiz.webp ici")
+        st.error("⚠️ Placez logo-tiz.webp ici")
 
 with col_title:
     st.markdown("<h1 style='margin-bottom:0;'>Configurateur Digital</h1><p style='color: #2563EB; font-weight: 600; margin-top:0;'>Simulateur d'architecture B2B</p>", unsafe_allow_html=True)
@@ -165,6 +165,7 @@ def apply_pack(pack_name):
 col_main, col_sidebar = st.columns([6, 4], gap="small")
 
 with col_main:
+    # ETAPE 1 : RECOMMANDATIONS
     with st.container(border=True):
         st.markdown("<h2>1. Configurations Recommandees</h2>", unsafe_allow_html=True)
         col_p1, col_p2, col_p3 = st.columns(3)
@@ -175,6 +176,7 @@ with col_main:
         with col_p3:
             st.button("Pack Demarrage", on_click=apply_pack, args=("Pack Demarrage d'activite",))
 
+    # ETAPE 2 : PERSONNALISATION
     with st.container(border=True):
         st.markdown("<h2>2. Personnalisation du Perimetre</h2>", unsafe_allow_html=True)
         col_uniques, col_recurrents = st.columns(2, gap="small")
@@ -187,6 +189,7 @@ with col_main:
             for name, info in SERVICES_RECURRENTS.items():
                 st.checkbox(f"{name} - {info['price']} € / m", key=f"cb_{name}", help=info['desc'])
 
+    # ETAPE 3 : FORMULAIRE
     with st.container(border=True):
         st.markdown("<h2>3. Transmission du dossier</h2>", unsafe_allow_html=True)
         with st.form("contact_form", clear_on_submit=True):
@@ -196,6 +199,7 @@ with col_main:
             submit_btn = st.form_submit_button("Valider le projet", type="primary")
 
 with col_sidebar:
+    # L'ESTIMATION (STICKY)
     with st.container(border=True):
         st.markdown("<h2>Votre Estimation</h2>", unsafe_allow_html=True)
         
