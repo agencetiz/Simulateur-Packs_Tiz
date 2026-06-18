@@ -71,43 +71,45 @@ st.markdown("""
         margin-top: 0.2rem;
     }
     
-    /* ROLLOVER BOUTONS SECONDAIRES (Bleu) - Ciblage des balises internes <p>, <span>, etc. */
+    /* ROLLOVER BOUTONS SECONDAIRES (Bleu) */
     .stButton>button:hover { 
         background-color: #2563EB !important; 
         border-color: #2563EB !important;
         box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
     }
-    .stButton>button:hover,
-    .stButton>button:hover p,
-    .stButton>button:hover div,
-    .stButton>button:hover span {
+    .stButton>button:hover * {
         color: #FFFFFF !important;
     }
     
-    /* BOUTON PRIMAIRE (Validation) */
-    [data-testid="baseButton-primary"] {
-        background-color: #E11D48 !important; /* Rouge */
+    /* BOUTON PRIMAIRE (Validation - Rouge) - Ciblage exhaustif */
+    button[data-testid="baseButton-primary"],
+    button[kind="primaryFormSubmit"],
+    button[kind="primary"] {
+        background-color: #E11D48 !important; 
         border: none !important;
         border-radius: 8px !important;
-        transition: all 0.2s ease;
+        transition: all 0.2s ease !important;
     }
-    [data-testid="baseButton-primary"],
-    [data-testid="baseButton-primary"] p,
-    [data-testid="baseButton-primary"] div,
-    [data-testid="baseButton-primary"] span {
+    
+    /* FORCE LE TEXTE BLANC EN PERMANENCE POUR LE BOUTON ROUGE */
+    button[data-testid="baseButton-primary"] p,
+    button[data-testid="baseButton-primary"] span,
+    button[data-testid="baseButton-primary"] div,
+    button[kind="primaryFormSubmit"] p,
+    button[kind="primaryFormSubmit"] span,
+    button[kind="primaryFormSubmit"] div,
+    button[kind="primary"] p,
+    button[kind="primary"] span,
+    button[kind="primary"] div {
         color: #FFFFFF !important;
     }
     
     /* ROLLOVER BOUTON PRIMAIRE (Rouge foncé) */
-    [data-testid="baseButton-primary"]:hover {
+    button[data-testid="baseButton-primary"]:hover,
+    button[kind="primaryFormSubmit"]:hover,
+    button[kind="primary"]:hover {
         background-color: #BE123C !important;
-        box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.3);
-    }
-    [data-testid="baseButton-primary"]:hover,
-    [data-testid="baseButton-primary"]:hover p,
-    [data-testid="baseButton-primary"]:hover div,
-    [data-testid="baseButton-primary"]:hover span {
-        color: #FFFFFF !important;
+        box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.3) !important;
     }
 
     .price-tag { color: #111827; font-weight: 600; float: right;}
@@ -128,7 +130,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# EN-TETE DE L'APPLICATION
+# EN-TETE DE L'APPLICATION (Logo agrandi et titre décalé)
 col_logo, col_title = st.columns([2, 8], gap="large")
 with col_logo:
     logo_path = "logo-tiz.webp"
@@ -140,7 +142,7 @@ with col_logo:
 with col_title:
     st.markdown("<div style='padding-top: 10px;'><h1 style='margin-bottom:0;'>Configurateur digital</h1><p style='color: #2563EB; font-weight: 600; margin-top:0;'>Simulateur d'architecture B2B</p></div>", unsafe_allow_html=True)
 
-# BASE DE DONNEES ARCHITECTURE
+# BASE DE DONNEES ARCHITECTURE (Textes passés en minuscules)
 SERVICES_UNIQUES = {
     "Audit UX & stratégie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
     "Création site web performant": {"price": 2800, "desc": "Conception orientée conversion et ergonomie."},
