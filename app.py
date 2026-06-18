@@ -136,4 +136,117 @@ PACKS_PRESETS = {
         "Creation de Contenu SEO"
     ],
     "Pack Demarrage d'activite": [
-        "Audit UX & Strategie B2
+        "Audit UX & Strategie B2B", 
+        "Creation Site Web Performant", 
+        "Design & Identite de Marque",
+        "Maintenance Technique"
+    ]
+}
+
+# GESTION DE L'ETAT
+for service in list(SERVICES_UNIQUES.keys()) + list(SERVICES_RECURRENTS.keys()):
+    if f"cb_{service}" not in st.session_state:
+        st.session_state[f"cb_{service}"] = False
+
+def apply_pack(pack_name):
+    pack_items = PACKS_PRESETS[pack_name]
+    for service in list(SERVICES_UNIQUES.keys()) + list(SERVICES_RECURRENTS.keys()):
+        st.session_state[f"cb_{service}"] = (service in pack_items)
+
+# STRUCTURE DE L'INTERFACE
+col_main, col_sidebar = st.columns([6, 4], gap="medium")
+
+with col_main:
+    # ETAPE 1 : CADRE BLEU
+    with st.container(border=True):
+        st.markdown("<h2>1. Configurations Recommandees</h2>", unsafe_allow_html=True)
+        
+        col_p1, col_p2, col_p3 = st.columns(3)
+        with col_p1:
+            st.button("Pack Prospection", on_click=apply_pack, args=("Pack Prospection",))
+        with col_p2:
+            st.button("Pack Notoriete", on_click=apply_pack, args=("Pack Notoriete",))
+        with col_p3:
+            st.button("Pack Demarrage", on_click=apply_pack, args=("Pack Demarrage d'activite",))
+
+    # ETAPE 2 : CADRE BLEU
+    with st.container(border=True):
+        st.markdown("<h2>2. Personnalisation du Perimetre</h2>", unsafe_allow_html=True)
+        
+        col_uniques, col_recurrents = st.columns(2, gap="small")
+        
+        with col_uniques:
+            st.markdown("<h3>Investissement Initial</h3>", unsafe_allow_html=True)
+            for name, info in SERVICES_UNIQUES.items():
+                label = f"{name} - {info['price']} €"
+                st.checkbox(label, key=f"cb_{name}", help=info['desc'])
+                    
+        with col_recurrents:
+            st.markdown("<h3>Accompagnement Mensuel</h3>", unsafe_allow_html=True)
+            for name, info in SERVICES_RECURRENTS.items():
+                label = f"{name} - {info['price']} € / m"
+                st.checkbox(label, key=f"cb_{name}", help=info['desc'])
+
+    # ETAPE 3 (FORMULAIRE DE CONTACT) : CADRE BLEU
+    with st.container(border=True):
+        st.markdown("<h2>3. Transmission du dossier</h2>", unsafe_allow_html=True)
+        
+        with st.form("contact_form", clear_on_submit=True):
+            nom = st.text_input("Nom & Prenom *")
+            entreprise = st.text_input("Societe *")
+            email = st.text_input("E-mail professionnel *")
+            
+            submit_btn = st.form_submit_button("Valider le projet", type="primary")
+
+with col_sidebar:
+    # L'ESTIMATION STICKY : CADRE BLEU
+    with st.container(border=True):
+        st.markdown("<h2 style='margin-top: 0;'>Votre Estimation</h2>", unsafe_allow_html=True)
+        
+        total_unique = 0
+        total_recurrent = 0
+        has_selection = False
+        
+        html_cart = "<ul style='list-style-type: none; padding: 0; margin: 0;'>"
+        
+        for item in SERVICES_UNIQUES:
+            if st.session_state[f"cb_{item}"]:
+                has_selection = True
+                price = SERVICES_UNIQUES[item]["price"]
+                total_unique += price
+                html_cart += f"<li style='padding: 0.6rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.8rem;'>{item} <span class='price-tag'>{price} €</span></li>"
+                
+        for item in SERVICES_RECURRENTS:
+            if st.session_state[f"cb_{item}"]:
+                has_selection = True
+                price = SERVICES_RECURRENTS[item]["price"]
+                total_recurrent += price
+                html_cart += f"<li style='padding: 0.6rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.8rem;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
+        
+        html_cart += "</ul>"
+        
+        if has_selection:
+            st.markdown(html_cart, unsafe_allow_html=True)
+            
+            # Bloc total mis en valeur
+            st.markdown(f"""
+            <div class="highlight-total">
+                <div class="label">Setup Initial H.T.</div>
+                <div class="value">{total_unique} €</div>
+                <div class="sub-value">Budget Mensuel : {total_recurrent} € / mois</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='background-color: #FFFFFF; padding: 1.5rem; border-radius: 6px; border: 1px dashed #9CA3AF; text-align: center; color: #6B7280; font-size: 0.8rem;'>Cochez des options pour visualiser l'estimation en temps reel.</div>", unsafe_allow_html=True)
+
+# GESTION DE L'ENVOI (Logique de routage vers marketing@tiz.fr)
+if submit_btn:
+    if nom and entreprise and email and has_selection:
+        # En production, ce bloc déclenche l'API mail (ex: SendGrid / SMTP) pointant vers l'adresse cible
+        # send_email_api(to="marketing@tiz.fr", subject=f"Nouveau Projet: {entreprise}", data=...)
+        
+        st.success(f"Dossier validé ! Les informations de {entreprise} ont été transmises avec succès à l'adresse marketing@tiz.fr. Notre équipe vous recontactera très prochainement.")
+    elif not has_selection:
+        st.warning("Veuillez construire une configuration avant de valider le projet.")
+    else:
+        st.error("Les champs marqués d'un astérisque sont obligatoires.")
