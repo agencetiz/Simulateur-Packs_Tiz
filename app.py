@@ -1,129 +1,130 @@
 import streamlit as st
 
 # CONFIGURATION SYSTEME DE LA PAGE
-st.set_page_config(page_title="Configurateur - Agence TIZ", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Configurateur - Agence Tiz", layout="wide", initial_sidebar_state="collapsed")
 
-# INJECTION CSS AVANCEE POUR DESIGN HAUT DE GAMME (Marque Blanche)
+# INJECTION CSS AVANCEE POUR DESIGN HAUT DE GAMME (Charte Tiz)
 st.markdown("""
     <style>
-    /* Importation d'une typographie premium */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
 
-    /* Application de la police et masquage des elements natifs Streamlit */
-    html, body, [class*="css"]  {
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        background-color: #F8FAFC;
+    html, body, [class*="css"] {
+        font-family: 'Montserrat', sans-serif;
+        background-color: #FFFFFF;
+        color: #111827;
     }
+    
+    /* Masquage des elements de base Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* Conteneur principal */
     .block-container { 
-        padding-top: 3rem; 
-        padding-bottom: 3rem; 
-        max-width: 1400px;
+        padding-top: 4rem; 
+        padding-bottom: 4rem; 
+        max-width: 1200px;
     }
 
-    /* Typographie et Titres */
-    h1, h2, h3 { color: #0F172A; font-weight: 700; letter-spacing: -0.02em; }
-    p { color: #475569; font-size: 1.05rem; }
+    /* Typographie */
+    h1 { color: #111827; font-weight: 700; letter-spacing: -1px; font-size: 2.5rem; margin-bottom: 0.5rem; }
+    h2 { color: #111827; font-weight: 600; font-size: 1.5rem; margin-top: 1rem; }
+    h3 { color: #374151; font-weight: 600; font-size: 1.25rem; }
+    p { color: #4B5563; font-size: 1rem; line-height: 1.6; }
 
-    /* Design des boutons (Orange TIZ & Navy) */
+    /* Boutons de l'interface (Gris fonce au repos, Accent au survol) */
     .stButton>button { 
         width: 100%; 
-        background-color: #FFFFFF;
-        color: #0F172A; 
+        background-color: #F3F4F6;
+        color: #111827; 
         font-weight: 600; 
-        border-radius: 8px; 
-        border: 2px solid #E2E8F0; 
-        padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
+        border-radius: 6px; 
+        border: 1px solid #E5E7EB; 
+        padding: 0.85rem 1rem;
+        transition: all 0.2s ease;
     }
     .stButton>button:hover { 
-        border-color: #FF5C00; 
-        color: #FF5C00; 
-        box-shadow: 0 4px 14px rgba(255, 92, 0, 0.15);
+        background-color: #111827; 
+        color: #FFFFFF; 
+        border-color: #111827;
+        box-shadow: 0 4px 12px rgba(17, 24, 39, 0.15);
         transform: translateY(-2px);
     }
     
-    /* Bouton principal (Formulaire) */
+    /* Bouton d'action principal (Formulaire) */
     [data-testid="baseButton-primary"] {
-        background-color: #FF5C00;
+        background-color: #111827;
         color: white;
         border: none;
     }
     [data-testid="baseButton-primary"]:hover {
-        background-color: #E05000;
+        background-color: #374151;
         color: white;
     }
 
-    /* Panneau de Devis (Glassmorphism / Shadow) */
-    .cart-box { 
-        background-color: #FFFFFF; 
-        padding: 30px; 
-        border-radius: 16px; 
-        border: 1px solid #E2E8F0;
-        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05); 
+    /* Boite de Devis (Design type SaaS) */
+    .tiz-card { 
+        background-color: #F9FAFB; 
+        padding: 32px; 
+        border-radius: 12px; 
+        border: 1px solid #E5E7EB;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02); 
     }
     
-    /* Tags de prix */
-    .price-tag { color: #0F172A; font-weight: 700; float: right;}
-    .recurring-tag { color: #FF5C00; font-weight: 700; float: right;}
+    /* Etiquettes de prix */
+    .price-tag { color: #111827; font-weight: 700; float: right;}
+    .recurring-tag { color: #4B5563; font-weight: 700; float: right;}
     
-    /* Lignes de separation personnalisees */
+    /* Ligne de separation */
     hr {
         border: 0;
         height: 1px;
-        background: #E2E8F0;
-        margin: 2rem 0;
+        background: #E5E7EB;
+        margin: 2.5rem 0;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# EN-TETE DE L'APPLICATION (Style Agence)
+# EN-TETE DE L'APPLICATION
 st.markdown("""
-    <div style='text-align: left; margin-bottom: 2rem;'>
-        <h1 style='color: #FF5C00; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0;'>Agence TIZ</h1>
-        <h2 style='font-size: 2.5rem; margin-top: 0;'>Configurateur Strategique 2026</h2>
-        <p style='color: #64748B; font-size: 1.1rem;'>Selectionnez vos solutions B2B. L'architecture de votre budget s'actualise en temps reel.</p>
+    <div style='text-align: left; margin-bottom: 3rem;'>
+        <h1 style='font-size: 3rem; margin-bottom: 0;'>Agence Tiz</h1>
+        <p style='color: #6B7280; font-size: 1.25rem; font-weight: 500;'>Simulateur de budget et d'architecture digitale.</p>
     </div>
-    <hr>
 """, unsafe_allow_html=True)
 
 # BASE DE DONNEES ARCHITECTURE
 SERVICES_UNIQUES = {
     "Audit UX & Strategie B2B": {"price": 1200, "desc": "Analyse du tunnel de conversion et positionnement."},
-    "Creation Site Nocode Agile": {"price": 2800, "desc": "Conception Duda/Shopify orientee performance."},
-    "Setup Campagne Google Ads": {"price": 950, "desc": "Configuration initiale, mots-cles et tracking."},
-    "Charte Graphique & Branding": {"price": 2500, "desc": "Creation de logo et univers de marque."},
-    "Conception Supports Print": {"price": 1600, "desc": "Mise en page de plaquettes commerciales."}
+    "Creation Site Web Performant": {"price": 2800, "desc": "Conception orientee conversion et ergonomie."},
+    "Configuration Google Ads": {"price": 950, "desc": "Setup initial, mots-cles et tracking."},
+    "Design & Identite de Marque": {"price": 2500, "desc": "Creation de logo et univers graphique complet."},
+    "Conception Supports Print": {"price": 1600, "desc": "Design de plaquettes et supports physiques."}
 }
 
 SERVICES_RECURRENTS = {
     "Accompagnement Co-Pilote": {"price": 1500, "desc": "Pilotage strategique et suivi mensuel du ROI."},
-    "Optimisation Google Ads": {"price": 500, "desc": "Ajustement mensuel des encheres et annonces."},
-    "SEO & Creation de Contenu": {"price": 800, "desc": "Redaction mensuelle et optimisation continue."},
-    "Maintenance & Securite": {"price": 150, "desc": "Supervision technique et mises a jour."}
+    "Gestion Google Ads": {"price": 500, "desc": "Ajustement mensuel des encheres et campagnes."},
+    "Creation de Contenu SEO": {"price": 800, "desc": "Redaction web et optimisation continue."},
+    "Maintenance Technique": {"price": 150, "desc": "Supervision, securite et mises a jour."}
 }
 
 PACKS_PRESETS = {
-    "Lancement (100% Unique)": [
+    "Pack Lancement": [
         "Audit UX & Strategie B2B", 
-        "Creation Site Nocode Agile", 
-        "Charte Graphique & Branding"
+        "Creation Site Web Performant", 
+        "Design & Identite de Marque"
     ],
-    "Lead Generation (Mixte)": [
-        "Setup Campagne Google Ads", 
-        "Creation Site Nocode Agile", 
-        "Optimisation Google Ads",
-        "Maintenance & Securite"
+    "Pack Acquisition": [
+        "Configuration Google Ads", 
+        "Creation Site Web Performant", 
+        "Gestion Google Ads",
+        "Maintenance Technique"
     ],
-    "Co-Pilote Integral": [
+    "Pack Strategie Globale": [
         "Audit UX & Strategie B2B", 
-        "Setup Campagne Google Ads",
+        "Configuration Google Ads",
         "Accompagnement Co-Pilote",
-        "Optimisation Google Ads"
+        "Gestion Google Ads"
     ]
 }
 
@@ -137,48 +138,46 @@ def apply_pack(pack_name):
     for service in list(SERVICES_UNIQUES.keys()) + list(SERVICES_RECURRENTS.keys()):
         st.session_state[f"cb_{service}"] = (service in pack_items)
 
-# STRUCTURE DE L'INTERFACE (GRILLE CSS VIA STREAMLIT COLUMNS)
+# STRUCTURE DE L'INTERFACE
 col_main, col_sidebar = st.columns([6, 4], gap="large")
 
 with col_main:
     # ETAPE 1
-    st.markdown("<h3>1. Pre-configurations strategiques</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 0.95rem; margin-bottom: 1.5rem;'>Chargez une structure de projet optimisee pour gagner du temps.</p>", unsafe_allow_html=True)
+    st.markdown("<h3>1. Configurations Recommandees</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.95rem; margin-bottom: 1.5rem;'>Appliquez une structure eprouvee pour vos objectifs.</p>", unsafe_allow_html=True)
     
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
-        st.button("Pack Lancement", on_click=apply_pack, args=("Lancement (100% Unique)",))
+        st.button("Pack Lancement", on_click=apply_pack, args=("Pack Lancement",))
     with col_p2:
-        st.button("Pack Lead Gen", on_click=apply_pack, args=("Lead Generation (Mixte)",))
+        st.button("Pack Acquisition", on_click=apply_pack, args=("Pack Acquisition",))
     with col_p3:
-        st.button("Pack Co-Pilote", on_click=apply_pack, args=("Co-Pilote Integral",))
+        st.button("Pack Strategie Globale", on_click=apply_pack, args=("Pack Strategie Globale",))
 
-    st.markdown("<hr style='margin: 3rem 0;'>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
     
     # ETAPE 2
-    st.markdown("<h3>2. Construction sur-mesure</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 0.95rem; margin-bottom: 1.5rem;'>Ajustez librement les leviers de votre accompagnement.</p>", unsafe_allow_html=True)
+    st.markdown("<h3>2. Personnalisation du Perimetre</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.95rem; margin-bottom: 1.5rem;'>Cochez les prestations pour affiner votre besoin.</p>", unsafe_allow_html=True)
     
     col_uniques, col_recurrents = st.columns(2, gap="medium")
     
     with col_uniques:
-        st.markdown("<h4 style='color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem;'>Investissement Initial</h4>", unsafe_allow_html=True)
-        st.write("")
+        st.markdown("<h4 style='color: #111827; padding-bottom: 0.5rem;'>Investissement Initial</h4>", unsafe_allow_html=True)
         for name, info in SERVICES_UNIQUES.items():
             label = f"{name} - {info['price']} €"
             st.checkbox(label, key=f"cb_{name}", help=info['desc'])
                 
     with col_recurrents:
-        st.markdown("<h4 style='color: #0F172A; border-bottom: 2px solid #E2E8F0; padding-bottom: 0.5rem;'>Abonnement Mensuel</h4>", unsafe_allow_html=True)
-        st.write("")
+        st.markdown("<h4 style='color: #111827; padding-bottom: 0.5rem;'>Accompagnement Mensuel</h4>", unsafe_allow_html=True)
         for name, info in SERVICES_RECURRENTS.items():
             label = f"{name} - {info['price']} € / m"
             st.checkbox(label, key=f"cb_{name}", help=info['desc'])
 
 with col_sidebar:
-    st.markdown('<div class="cart-box">', unsafe_allow_html=True)
-    st.markdown("<h3 style='margin-top: 0; color: #0F172A;'>Synthese Financiere</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 0.9rem; margin-bottom: 2rem;'>Budget estimatif hors taxes.</p>", unsafe_allow_html=True)
+    st.markdown('<div class="tiz-card">', unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-top: 0; color: #111827; font-size: 1.5rem;'>Estimation</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.9rem; margin-bottom: 2rem; color: #6B7280;'>Montants exprimes en euros, hors taxes.</p>", unsafe_allow_html=True)
     
     total_unique = 0
     total_recurrent = 0
@@ -191,14 +190,14 @@ with col_sidebar:
             has_selection = True
             price = SERVICES_UNIQUES[item]["price"]
             total_unique += price
-            html_cart += f"<li style='padding: 0.75rem 0; border-bottom: 1px solid #F1F5F9; color: #334155; font-size: 0.95rem;'>{item} <span class='price-tag'>{price} €</span></li>"
+            html_cart += f"<li style='padding: 0.85rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.95rem;'>{item} <span class='price-tag'>{price} €</span></li>"
             
     for item in SERVICES_RECURRENTS:
         if st.session_state[f"cb_{item}"]:
             has_selection = True
             price = SERVICES_RECURRENTS[item]["price"]
             total_recurrent += price
-            html_cart += f"<li style='padding: 0.75rem 0; border-bottom: 1px solid #F1F5F9; color: #334155; font-size: 0.95rem;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
+            html_cart += f"<li style='padding: 0.85rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.95rem;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
     
     html_cart += "</ul>"
     
@@ -210,29 +209,29 @@ with col_sidebar:
         with col_m1:
             st.metric(label="SETUP INITIAL", value=f"{total_unique} €")
         with col_m2:
-            st.metric(label="RECURRENT", value=f"{total_recurrent} €")
+            st.metric(label="BUDGET MENSUEL", value=f"{total_recurrent} €")
     else:
-        st.markdown("<div style='background-color: #F8FAFC; padding: 1.5rem; border-radius: 8px; text-align: center; color: #94A3B8;'>Aucune solution selectionnee</div>", unsafe_allow_html=True)
+        st.markdown("<div style='background-color: #FFFFFF; padding: 1.5rem; border-radius: 8px; border: 1px dashed #D1D5DB; text-align: center; color: #9CA3AF;'>Aucun service selectionne</div>", unsafe_allow_html=True)
         
     st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("<br><br>", unsafe_allow_html=True)
     
     # FORMULAIRE DE CONTACT
-    st.markdown("<h3>3. Valider l'architecture</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 0.95rem;'>Echangeons sur cette configuration.</p>", unsafe_allow_html=True)
+    st.markdown("<h3>3. Valider le projet</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 0.95rem;'>Transmettez cette simulation a notre equipe.</p>", unsafe_allow_html=True)
     
     with st.form("contact_form", clear_on_submit=True):
         nom = st.text_input("Nom & Prenom *")
         entreprise = st.text_input("Societe *")
         email = st.text_input("E-mail professionnel *")
         
-        submit_btn = st.form_submit_button("Solliciter l'equipe TIZ", type="primary")
+        submit_btn = st.form_submit_button("Demander un rendez-vous", type="primary")
         
         if submit_btn:
             if nom and entreprise and email and has_selection:
-                st.success(f"Dossier transmis. Un conseiller TIZ vous contactera sous 24h pour valider ce dimensionnement (Setup: {total_unique}€ | Mensuel: {total_recurrent}€).")
+                st.success(f"Dossier transmis. Un expert Tiz vous contactera sous 24h pour discuter de cette architecture (Setup: {total_unique}€ | Mensuel: {total_recurrent}€).")
             elif not has_selection:
-                st.warning("Veuillez concevoir une configuration avant de soumettre.")
+                st.warning("Veuillez construire une configuration avant de valider.")
             else:
                 st.error("Les champs marques d'un asterisque sont obligatoires.")
