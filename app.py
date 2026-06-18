@@ -1,9 +1,10 @@
 import streamlit as st
+import os
 
 # CONFIGURATION SYSTEME DE LA PAGE
 st.set_page_config(page_title="Configurateur - Agence Tiz", layout="wide", initial_sidebar_state="collapsed")
 
-# INJECTION CSS AVANCEE (Espaces reduits, Polices reduites de 30%, sticky)
+# INJECTION CSS AVANCEE (Ultra-compact, espacements reduits au maximum)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
@@ -18,7 +19,7 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
 
-    /* REDUCTION DES ESPACES (Padding global) */
+    /* COMPRESSION DES ESPACES GLOBAUX */
     .block-container { 
         padding-top: 1.5rem !important; 
         padding-bottom: 1.5rem !important; 
@@ -34,23 +35,29 @@ st.markdown("""
         z-index: 100;
     }
 
-    /* REDUCTION DES ESPACES DES CADRES */
+    /* REDUCTION MASSIVE DES ESPACES INTERNES DES CADRES */
     [data-testid="stVerticalBlockBorderWrapper"] {
         border: 2px solid #2563EB !important;
-        border-radius: 8px !important;
+        border-radius: 6px !important;
         background-color: #FAFAFA !important;
-        padding: 0.2rem 0.5rem !important;
-        box-shadow: 0 2px 5px rgba(37, 99, 235, 0.05);
-        margin-bottom: 0.5rem !important;
+        padding: 0.1rem 0.4rem !important;
+        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.05);
+        margin-bottom: 0.3rem !important;
     }
 
-    /* REDUCTION DES POLICES (-30%) */
-    h1 { color: #111827; font-weight: 700; letter-spacing: -0.5px; font-size: 2.1rem !important; margin-bottom: 0.2rem !important; }
-    h2 { color: #2563EB; font-weight: 700; font-size: 1.05rem !important; margin-top: 0.2rem !important; margin-bottom: 0.8rem !important;}
-    h3 { color: #111827; font-weight: 600; font-size: 0.85rem !important; margin-bottom: 0.2rem !important; }
-    p { color: #4B5563; font-size: 0.7rem !important; line-height: 1.4 !important; margin-bottom: 0.5rem !important; }
+    /* SUPPRESSION DES MARGES DES TITRES ET PARAGRAPHES */
+    h1 { color: #111827; font-weight: 700; letter-spacing: -0.5px; font-size: 2.1rem !important; margin: 0 !important; padding: 0 !important; }
+    h2 { color: #2563EB; font-weight: 700; font-size: 1.05rem !important; margin: 0.2rem 0 0.1rem 0 !important; padding: 0 !important; }
+    h3 { color: #111827; font-weight: 600; font-size: 0.85rem !important; margin: 0.2rem 0 0.1rem 0 !important; padding: 0 !important; }
+    p { color: #4B5563; font-size: 0.7rem !important; line-height: 1.2 !important; margin: 0 0 0.3rem 0 !important; padding: 0 !important; }
 
-    /* REDUCTION DES BOUTONS ET CHECKBOX */
+    /* REDUCTION DE L'ESPACEMENT DES CHECKBOX STREAMLIT */
+    div.row-widget.stCheckbox {
+        margin-top: -0.4rem !important;
+        margin-bottom: -0.4rem !important;
+    }
+
+    /* BOUTONS D'ACTION */
     .stButton>button { 
         width: 100%; 
         background-color: #FFFFFF;
@@ -58,14 +65,14 @@ st.markdown("""
         font-weight: 600; 
         border-radius: 4px; 
         border: 1px solid #2563EB; 
-        padding: 0.4rem 0.5rem;
+        padding: 0.2rem 0.5rem;
         transition: all 0.2s ease;
         font-size: 0.75rem !important;
+        margin-top: 0.2rem;
     }
     .stButton>button:hover { 
         background-color: #2563EB; 
         color: #FFFFFF; 
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
     
     [data-testid="baseButton-primary"] {
@@ -78,34 +85,36 @@ st.markdown("""
     }
 
     /* ETIQUETTES DE PRIX */
-    .price-tag { color: #111827; font-weight: 700; float: right;}
-    .recurring-tag { color: #2563EB; font-weight: 700; float: right;}
+    .price-tag { color: #111827; font-weight: 600; float: right;}
+    .recurring-tag { color: #2563EB; font-weight: 600; float: right;}
     
-    /* BLOC TOTAL MIS EN VALEUR */
+    /* BLOC TOTAL FINAL */
     .highlight-total {
         background-color: #2563EB;
         color: white;
-        padding: 1rem;
+        padding: 0.8rem;
         border-radius: 6px;
-        margin-top: 1rem;
+        margin-top: 0.5rem;
         text-align: center;
     }
     .highlight-total .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.9; }
-    .highlight-total .value { font-size: 1.4rem; font-weight: 700; margin-top: 0.3rem; }
-    .highlight-total .sub-value { font-size: 0.8rem; margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid rgba(255,255,255,0.2); }
+    .highlight-total .value { font-size: 1.3rem; font-weight: 700; margin-top: 0.1rem; }
+    .highlight-total .sub-value { font-size: 0.8rem; margin-top: 0.2rem; padding-top: 0.2rem; border-top: 1px solid rgba(255,255,255,0.2); }
     </style>
 """, unsafe_allow_html=True)
 
-# EN-TETE DE L'APPLICATION AVEC LOGO
-st.markdown("""
-    <div style='display: flex; align-items: center; margin-bottom: 1.5rem;'>
-        <img src='https://www.tiz.fr/wp-content/uploads/2023/11/logo-tiz-black.svg' alt='Logo Tiz' style='height: 40px; margin-right: 1.5rem;' onerror="this.src='https://www.tiz.fr/wp-content/themes/tiz/images/logo.png'">
-        <div>
-            <h1 style='margin: 0;'>Configurateur Digital</h1>
-            <p style='color: #2563EB; font-weight: 600; margin: 0;'>Simulateur d'architecture B2B</p>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
+# EN-TETE DE L'APPLICATION AVEC FICHIER .WEBP LOCAL
+col_logo, col_title = st.columns([1, 8], gap="small")
+with col_logo:
+    # Le fichier doit etre a la racine avec app.py
+    logo_path = "logo-tiz.webp"
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=80)
+    else:
+        st.error("Placez logo-tiz.webp ici")
+
+with col_title:
+    st.markdown("<h1 style='margin-bottom:0;'>Configurateur Digital</h1><p style='color: #2563EB; font-weight: 600; margin-top:0;'>Simulateur d'architecture B2B</p>", unsafe_allow_html=True)
 
 # BASE DE DONNEES ARCHITECTURE
 SERVICES_UNIQUES = {
@@ -123,7 +132,6 @@ SERVICES_RECURRENTS = {
     "Maintenance Technique": {"price": 150, "desc": "Supervision, securite et mises a jour."}
 }
 
-# NOUVEAUX PACKS STRATEGIQUES
 PACKS_PRESETS = {
     "Pack Prospection": [
         "Configuration Google Ads", 
@@ -154,13 +162,11 @@ def apply_pack(pack_name):
         st.session_state[f"cb_{service}"] = (service in pack_items)
 
 # STRUCTURE DE L'INTERFACE
-col_main, col_sidebar = st.columns([6, 4], gap="medium")
+col_main, col_sidebar = st.columns([6, 4], gap="small")
 
 with col_main:
-    # ETAPE 1 : CADRE BLEU
     with st.container(border=True):
         st.markdown("<h2>1. Configurations Recommandees</h2>", unsafe_allow_html=True)
-        
         col_p1, col_p2, col_p3 = st.columns(3)
         with col_p1:
             st.button("Pack Prospection", on_click=apply_pack, args=("Pack Prospection",))
@@ -169,82 +175,84 @@ with col_main:
         with col_p3:
             st.button("Pack Demarrage", on_click=apply_pack, args=("Pack Demarrage d'activite",))
 
-    # ETAPE 2 : CADRE BLEU
     with st.container(border=True):
         st.markdown("<h2>2. Personnalisation du Perimetre</h2>", unsafe_allow_html=True)
-        
         col_uniques, col_recurrents = st.columns(2, gap="small")
-        
         with col_uniques:
             st.markdown("<h3>Investissement Initial</h3>", unsafe_allow_html=True)
             for name, info in SERVICES_UNIQUES.items():
-                label = f"{name} - {info['price']} €"
-                st.checkbox(label, key=f"cb_{name}", help=info['desc'])
-                    
+                st.checkbox(f"{name} - {info['price']} €", key=f"cb_{name}", help=info['desc'])
         with col_recurrents:
             st.markdown("<h3>Accompagnement Mensuel</h3>", unsafe_allow_html=True)
             for name, info in SERVICES_RECURRENTS.items():
-                label = f"{name} - {info['price']} € / m"
-                st.checkbox(label, key=f"cb_{name}", help=info['desc'])
+                st.checkbox(f"{name} - {info['price']} € / m", key=f"cb_{name}", help=info['desc'])
 
-    # ETAPE 3 (FORMULAIRE DE CONTACT) : CADRE BLEU
     with st.container(border=True):
         st.markdown("<h2>3. Transmission du dossier</h2>", unsafe_allow_html=True)
-        
         with st.form("contact_form", clear_on_submit=True):
             nom = st.text_input("Nom & Prenom *")
             entreprise = st.text_input("Societe *")
             email = st.text_input("E-mail professionnel *")
-            
             submit_btn = st.form_submit_button("Valider le projet", type="primary")
 
 with col_sidebar:
-    # L'ESTIMATION STICKY : CADRE BLEU
     with st.container(border=True):
-        st.markdown("<h2 style='margin-top: 0;'>Votre Estimation</h2>", unsafe_allow_html=True)
+        st.markdown("<h2>Votre Estimation</h2>", unsafe_allow_html=True)
         
         total_unique = 0
         total_recurrent = 0
         has_selection = False
+        html_cart = ""
         
-        html_cart = "<ul style='list-style-type: none; padding: 0; margin: 0;'>"
-        
+        # CALCUL ET AFFICHAGE SETUP INITIAL
         for item in SERVICES_UNIQUES:
             if st.session_state[f"cb_{item}"]:
                 has_selection = True
-                price = SERVICES_UNIQUES[item]["price"]
-                total_unique += price
-                html_cart += f"<li style='padding: 0.6rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.8rem;'>{item} <span class='price-tag'>{price} €</span></li>"
-                
+                total_unique += SERVICES_UNIQUES[item]["price"]
+        
+        if total_unique > 0:
+            html_cart += "<h3 style='color: #111827; border-bottom: 1px solid #E5E7EB; padding-bottom: 0.2rem; margin-top: 0.5rem !important;'>Dépenses Fixes (Setup)</h3>"
+            html_cart += "<ul style='list-style-type: none; padding: 0; margin: 0 0 0.5rem 0;'>"
+            for item in SERVICES_UNIQUES:
+                if st.session_state[f"cb_{item}"]:
+                    price = SERVICES_UNIQUES[item]["price"]
+                    html_cart += f"<li style='padding: 0.3rem 0; color: #374151; font-size: 0.75rem;'>{item} <span class='price-tag'>{price} €</span></li>"
+            html_cart += f"<li style='padding: 0.4rem 0; color: #111827; font-size: 0.8rem; font-weight: 700; text-align: right; border-top: 1px dashed #D1D5DB;'>Sous-total Fixe : {total_unique} €</li>"
+            html_cart += "</ul>"
+
+        # CALCUL ET AFFICHAGE RECURRENT MENSUEL
         for item in SERVICES_RECURRENTS:
             if st.session_state[f"cb_{item}"]:
                 has_selection = True
-                price = SERVICES_RECURRENTS[item]["price"]
-                total_recurrent += price
-                html_cart += f"<li style='padding: 0.6rem 0; border-bottom: 1px solid #E5E7EB; color: #374151; font-size: 0.8rem;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
-        
-        html_cart += "</ul>"
+                total_recurrent += SERVICES_RECURRENTS[item]["price"]
+
+        if total_recurrent > 0:
+            html_cart += "<h3 style='color: #111827; border-bottom: 1px solid #E5E7EB; padding-bottom: 0.2rem; margin-top: 0.5rem !important;'>Accompagnement Mensuel</h3>"
+            html_cart += "<ul style='list-style-type: none; padding: 0; margin: 0 0 0.5rem 0;'>"
+            for item in SERVICES_RECURRENTS:
+                if st.session_state[f"cb_{item}"]:
+                    price = SERVICES_RECURRENTS[item]["price"]
+                    html_cart += f"<li style='padding: 0.3rem 0; color: #374151; font-size: 0.75rem;'>{item} <span class='recurring-tag'>{price} € / m</span></li>"
+            html_cart += f"<li style='padding: 0.4rem 0; color: #2563EB; font-size: 0.8rem; font-weight: 700; text-align: right; border-top: 1px dashed #D1D5DB;'>Sous-total Mensuel : {total_recurrent} € / m</li>"
+            html_cart += "</ul>"
         
         if has_selection:
             st.markdown(html_cart, unsafe_allow_html=True)
             
-            # Bloc total mis en valeur
+            # BLOC TOTAL MIS EN VALEUR
             st.markdown(f"""
             <div class="highlight-total">
-                <div class="label">Setup Initial H.T.</div>
+                <div class="label">Total Setup H.T.</div>
                 <div class="value">{total_unique} €</div>
-                <div class="sub-value">Budget Mensuel : {total_recurrent} € / mois</div>
+                <div class="sub-value">Total Mensuel : {total_recurrent} € / mois</div>
             </div>
             """, unsafe_allow_html=True)
         else:
-            st.markdown("<div style='background-color: #FFFFFF; padding: 1.5rem; border-radius: 6px; border: 1px dashed #9CA3AF; text-align: center; color: #6B7280; font-size: 0.8rem;'>Cochez des options pour visualiser l'estimation en temps reel.</div>", unsafe_allow_html=True)
+            st.markdown("<div style='background-color: #FFFFFF; padding: 1rem; border-radius: 4px; border: 1px dashed #9CA3AF; text-align: center; color: #6B7280; font-size: 0.75rem;'>Cochez des options pour visualiser l'estimation détaillée.</div>", unsafe_allow_html=True)
 
-# GESTION DE L'ENVOI (Logique de routage vers marketing@tiz.fr)
+# GESTION DE L'ENVOI
 if submit_btn:
     if nom and entreprise and email and has_selection:
-        # En production, ce bloc déclenche l'API mail (ex: SendGrid / SMTP) pointant vers l'adresse cible
-        # send_email_api(to="marketing@tiz.fr", subject=f"Nouveau Projet: {entreprise}", data=...)
-        
         st.success(f"Dossier validé ! Les informations de {entreprise} ont été transmises avec succès à l'adresse marketing@tiz.fr. Notre équipe vous recontactera très prochainement.")
     elif not has_selection:
         st.warning("Veuillez construire une configuration avant de valider le projet.")
